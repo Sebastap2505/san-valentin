@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA PRIVADO ❤️</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+       
+        * { box-sizing: border-box; }
+        body { background-color: #2c0003; background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(40, 0, 0, 0.4)), radial-gradient(#d4af37 2px, transparent 3px); background-size: 100% 100%, 50px 50px; font-family: 'Playfair Display', serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; overflow-x: hidden; position: relative; }
+        #bloqueo-inicial { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 6000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1s ease; }
+        .cofre-card { text-align: center; padding: 30px; border: 3px solid #d4af37; border-radius: 20px; background: radial-gradient(circle, #5e0000 0%, #2c0003 100%); box-shadow: 0 0 50px #d4af37; width: 400px; max-width: 90%; animation: latido 2s infinite; }
+        @keyframes latido { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } 100% { transform: translateX(0); } }
+        .input-cofre { background: transparent; border: none; border-bottom: 2px solid #d4af37; color: #d4af37; font-size: 1.3rem; text-align: center; width: 100%; margin: 20px 0; outline: none; letter-spacing: 3px; }
+        #pantalla-desencriptacion { display: none; font-family: 'Courier Prime', monospace; color: #00ff00; text-align: left; width: 320px; max-width: 90%; }
+        .linea-hack { overflow: hidden; white-space: nowrap; animation: typing 0.5s steps(40, end); margin-bottom: 5px; }
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+
+        #telon-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000; pointer-events: none; display: flex; }
+        .cortina { width: 51%; height: 100%; position: absolute; top: 0; transition: transform 3.5s cubic-bezier(0.25, 1, 0.5, 1); background: repeating-linear-gradient(90deg, #4a0000 0%, #750000 10%, #4a0000 20%); border-bottom: 5px solid #d4af37; }
+        .cortina-izq { left: 0; border-right: 2px solid #300000; } .cortina-der { right: 0; border-left: 2px solid #300000; }
+        #telon-overlay.abierto .cortina-izq { transform: translateX(-100%); } #telon-overlay.abierto .cortina-der { transform: translateX(100%); }
+        .menu-container { position: fixed; top: 40px; right: 40px; z-index: 2000; }
+        .hamburguesa { width: 35px; height: 25px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
+        .hamburguesa span { display: block; height: 4px; width: 100%; background-color: #d4af37; border-radius: 10px; transition: 0.3s; }
+        .menu-desplegable { position: fixed; top: -650px; right: 40px; background-color: #a80000; border: 2px solid #d4af37; border-radius: 15px; padding: 20px; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.4s ease; z-index: 1900; max-height: 80vh; overflow-y: auto; }
+        .menu-desplegable.activo { top: 85px; } 
+        .menu-desplegable a { display: block; color: #ffffff; text-decoration: none; font-family: 'Dancing Script', cursive; font-size: 1.3rem; margin: 15px 0; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); cursor: pointer; }
+        .btn-contenedor-audio { position: absolute; top: 15px; left: 0; z-index: 1000; }
+        #btnMusica { background-color: #d4af37; color: #a80000; border: none; padding: 8px 15px; border-radius: 0 30px 30px 0; cursor: pointer; font-weight: bold; }
+        
+        .carta { 
+            background-color: #a80000; 
+            padding: 50px; 
+            border-radius: 5px; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.6); 
+            max-width: 650px; 
+            width: 100%; 
+            position: relative; 
+            outline: 2px solid #d4af37; 
+            outline-offset: -15px; 
+            margin-top: 50px; 
+            z-index: 10; 
+            opacity: 0; 
+            transition: 2s; 
+            overflow: hidden; 
+        }
+        .carta.foco-prendido { opacity: 1; }
+        
+        #titulo { color: #d4af37; font-family: 'Dancing Script'; text-align: center; font-size: 3.5rem; margin: 0 0 20px 0; }
+        #texto-carta { color: #ffffff; font-family: 'Dancing Script', cursive; font-size: 1.5rem; line-height: 1.6; }
+        
+        .firma-contenedor-final { 
+            display: none; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 40px; 
+            opacity: 0; 
+            transition: 2s; 
+        }
+        .foto-firma { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 3px solid #d4af37; }
+        .texto-firma { font-family:'Great Vibes'; color:#d4af37; font-size:3rem; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-card { background: #a80000; border: 2px solid #d4af37; padding: 30px; border-radius: 20px; text-align: center; box-shadow: 0 0 30px #d4af37; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
+        .btn-enviar { background:#d4af37; color:#a80000; border:none; padding:12px; border-radius:50px; font-weight:bold; cursor:pointer; width:100%; }
+        .corazon { position: fixed; top: -50px; font-size: 1.5rem; color: #ff4d4d; z-index: 9999; pointer-events: none; }
+        textarea, select { width: 100%; border-radius: 10px; border: 1px solid #d4af37; background: #2c0003; color: white; padding: 15px; font-family: 'Playfair Display'; font-size: 1rem; margin-bottom: 20px; outline: none; }
+        
+        @media (max-width: 600px) {
+            .carta { 
+                padding: 30px 20px; 
+            }
+            
+            
+            .firma-contenedor-final {
+                justify-content: center !important; 
+                gap: 10px; 
+                flex-wrap: nowrap; 
+            }
+
+            
+            .foto-firma { 
+                width: 70px; 
+                height: 70px; 
+                border-width: 2px;
+            }
+
+            .texto-firma {
+                font-size: 2rem !important; 
+            }
+
+            #titulo { font-size: 2.5rem; }
+            #texto-carta { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="bloqueo-inicial">
+        <div class="cofre-card" id="card-password">
+            <h1 style="font-size: 3rem; margin: 0;">🔒</h1>
+            <h2 style="font-family:'Dancing Script'; color:#d4af37;">Acceso al Sistema</h2>
+            <input type="password" id="clave-cofre" class="input-cofre" placeholder="" autocomplete="off">
+            <button onclick="verificarPassword()" class="btn-enviar">Desbloquear 🗝️</button>
+            <p id="error-cofre" style="color:#ffcccc; display:none; margin-top:10px">❌ Acceso Denegado</p>
+            <p style="color: #d4af37; font-family: 'Dancing Script'; font-size: 1.2rem; margin-top: 20px;">pista: el dia que nos vimos por primera vez</p>
+        </div>
+        <div id="pantalla-desencriptacion"><div id="log-hack-container"></div></div>
+    </div>
+
+    <div id="telon-overlay"><div class="cortina cortina-izq"></div><div class="cortina cortina-der"></div></div>
+    
+    <div class="menu-container">
+        <div class="hamburguesa" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+        <div class="menu-desplegable" id="miMenu">
+            <a href="index.html">🏠 Inicio</a>
+            <a href="galeria.html">🔐 Galería Secreta</a>
+            <a onclick="mostrarContador()">⏳ Nuestro Tiempo</a>
+            <a onclick="mostrarFechas()">📅 Base de Datos (Fechas)</a>
+            <a onclick="mostrarDeseos()">📩 Buzón de Deseos</a>
+            <a onclick="mostrarQuiz()">🧠 Quiz de Amor</a>
+            <a onclick="mostrarConfig()">⚙️ Configuración</a>
+        </div>
+    </div>
+
+    <audio id="miMusica" loop><source src="audio/LALALAND.mp3" type="audio/mpeg"></audio>
+    <audio id="sfx-teclado" loop><source src="audio/teclado.mp3" type="audio/mpeg"></audio>
+    <div class="btn-contenedor-audio"><button onclick="reproducir()" id="btnMusica">🎵 música</button></div>
+
+    <div class="carta">
+        <h1 id="titulo"></h1>
+        <div id="texto-carta"></div>
+        <div id="seccion-final" class="firma-contenedor-final">
+            <img id="s1" src="" class="foto-firma">
+            <div style="text-align:center">
+                <span class="texto-firma">Con cariño, Sebastián</span>
+            </div>
+            <img id="m1" src="" class="foto-firma">
+        </div>
+    </div>
+
+    <div id="modal-contador" class="modal-overlay"><div class="modal-card"><h2 style="font-family:'Dancing Script'; color:#d4af37; font-size:2.5rem;">Nuestro tiempo</h2><p style="color:#f1c40f; font-style:italic">Desde el 14 de febrero de 2025</p><div id="reloj-digital" style="color:white; font-family:'Playfair Display'; font-size: 1.2rem; line-height:1.5; margin: 20px 0;"></div><button onclick="cerrarModal('modal-contador')" class="btn-enviar">Cerrar</button></div></div>
+
+    <div id="modal-deseos" class="modal-overlay"><div class="modal-card"><h2 style="font-family:'Dancing Script'; color:#d4af37; font-size:2.2rem;">Buzón</h2><form action="https://formspree.io/f/xqedeobr" method="POST" id="form-deseos"><textarea name="mensaje" rows="4" placeholder="escribe aquí....." required></textarea><button type="submit" class="btn-enviar">Enviar</button></form><button onclick="cerrarModal('modal-deseos')" class="btn-enviar" style="margin-top:10px; background:transparent; color:#d4af37; text-decoration:underline; border:none">Cerrar</button></div></div>
+    
+    <div id="modal-quiz" class="modal-overlay"><div class="modal-card" style="text-align:left"><h2 style="font-family:'Dancing Script'; color:#d4af37;">Quiz</h2><label style="color:#d4af37;">1. ¿Comida favorita?</label><select id="p1"><option value="error">Pizza</option><option value="correcta">Lasagna</option></select><label style="color:#d4af37;">2. ¿Día que hablamos?</label><select id="p2"><option value="correcta">24 de agosto</option><option value="error">23 de agosto</option></select><label style="color:#d4af37;">3. ¿Dónde nos conocimos?</label><select id="p3"><option value="correcta">Por mensajes</option><option value="error">En Mérida</option></select><label style="color:#d4af37;">4. ¿Color favorito?</label><select id="p4"><option value="correcta">Negro</option><option value="error">Rojo</option></select><label style="color:#d4af37;">5. ¿Comida que odio?</label><select id="p5"><option value="correcta">Puchero</option><option value="error">Sushi</option></select><button onclick="validarQuiz()" class="btn-enviar">Verificar</button><p id="resultado-quiz" style="text-align:center; font-weight:bold; color:#d4af37; margin-top:10px;"></p><button onclick="cerrarModal('modal-quiz')" class="btn-enviar" style="background:transparent; color:#d4af37; text-decoration:underline; border:none">Cerrar</button></div></div>
+
+    <div id="modal-config" class="modal-overlay"><div class="modal-card"><h2 style="font-family:'Dancing Script'; color:#d4af37;">Configuración</h2><p style="color:white;">Personaliza la lluvia:</p><div style="display:flex; gap:10px; justify-content:center;"><button onclick="cambiarLluvia('❤️')" style="font-size:1.5rem; background:transparent; border:none; cursor:pointer;">❤️</button><button onclick="cambiarLluvia('🌹')" style="font-size:1.5rem; background:transparent; border:none; cursor:pointer;">🌹</button><button onclick="cambiarLluvia('✨')" style="font-size:1.5rem; background:transparent; border:none; cursor:pointer;">✨</button></div><p id="config-status" style="color:#00ff00; display:none; margin-top:10px;">> Cambios aplicados.</p><button onclick="cerrarModal('modal-config')" class="btn-enviar" style="margin-top:20px;">Cerrar</button></div></div>
+
+    <div id="modal-fechas" class="modal-overlay">
+        <div class="modal-card" style="text-align:left">
+            <h2 style="font-family:'Dancing Script'; color:#d4af37; text-align:center">Base de Datos</h2>
+            <p style="color:white; text-align:center; font-size:0.8rem; margin-bottom:20px; font-family:'Courier Prime'; opacity:0.8;">[REGISTRO DE EVENTOS]</p>
+            
+            <div id="contenedor-fechas-seguro">
+                <div style="border-bottom:1px solid rgba(212,175,55,0.3); padding:10px 0;">
+                    <div style="color:#d4af37; font-weight:bold; font-size:1.1rem;">👸 Cumple de Mich</div>
+                    <div style="color:white;">15 de Abril</div>
+                </div>
+                <div style="border-bottom:1px solid rgba(212,175,55,0.3); padding:10px 0;">
+                    <div style="color:#d4af37; font-weight:bold; font-size:1.1rem;">🎂 Mi Cumpleaños</div>
+                    <div style="color:white;">05 de Diciembre</div>
+                </div>
+                <div style="border-bottom:1px solid rgba(212,175,55,0.3); padding:10px 0;">
+                    <div style="color:#d4af37; font-weight:bold; font-size:1.1rem;">💬 Primer Mensaje</div>
+                    <div style="color:white;">24 de Agosto</div>
+                </div>
+                <div style="border-bottom:1px solid rgba(212,175,55,0.3); padding:10px 0;">
+                    <div style="color:#d4af37; font-weight:bold; font-size:1.1rem;">😍 Primera Cita</div>
+                    <div style="color:white;">22 de Noviembre</div>
+                </div>
+                <div style="border-bottom:1px solid rgba(212,175,55,0.3); padding:10px 0;">
+                    <div style="color:#d4af37; font-weight:bold; font-size:1.1rem;">🚗 Última vez en Valladolid</div>
+                    <div style="color:white;">19 de Diciembre</div>
+                </div>
+                <div style="padding:10px 0;">
+                    <div style="color:#d4af37; font-weight:bold; font-size:1.1rem;">💘 Nuestro Aniversario</div>
+                    <div style="color:white;">14 de Febrero</div>
+                </div>
+            </div>
+
+            <button onclick="cerrarModal('modal-fechas')" class="btn-enviar" style="margin-top:15px">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+
+        sessionStorage.removeItem("acceso_concedido");
+
+        const _k = "MjIxMTI0"; 
+        const _t = "RmVsaXogQW5pdmVyc2FyaW8=";
+        const _c = "TWljaCw8YnI+PGJyPlF1ZXLDr2EgZXNjcmliaXJ0ZSBlc3RhIGNhcnRhIHBvcnF1ZSB1biBzaW1wbGUgJ0ZlbGl6IFNhbiBWYWxlbnTDrW4nIG5vIGVzIHN1ZmljaWVudGUgcGFyYSBleHByZXNhciB0b2RvIGxvIHF1ZSBzaWVudG8gcG9yIHRpLiBBZGVtw6FzIGRlIGNlbGVicmFyIGVsIGFtb3IsIGNlbGVicmFtb3Mgb3RybyBjYXBpdHVsbyBqdW50b3MgeSBlc28gbWUgaGFjZSBpbm1lbnNhbWVudGUgZmVsaXouPGJyPjxicj5HcmFjaWFzIHBvciBjYWRhIG1vbWVudG8sIHBvciBjYWRhIHJpc2EgeSBwb3IgZXN0YXIgY29ubWlnby4gRXJlcyBsYSBtZWpvciBjb21wYcOxZXJhIHF1ZSBwb2Ryw61hIHBlZGlyIHkgZXN0b3kgbXV5IG9yZ3VsbG9zbyBkZSB0aS4=";
+        
+        const decode = (s) => decodeURIComponent(escape(atob(s)));
+        const tituloTexto = decode(_t);
+        const cuerpoTexto = decode(_c);
+        
+        document.getElementById('s1').src = "\x69\x6d\x67\x2f\x53\x45\x42\x41\x53\x2e\x70\x6e\x67";
+        document.getElementById('m1').src = "\x69\x6d\x67\x2f\x4d\x49\x43\x48\x2e\x70\x6e\x67";
+
+        let i = 0, j = 0, lluviaInt;
+        let emojiLluvia = '❤️'; 
+        const logs = [
+            "[SYSTEM] VALIDANDO CLAVE...", 
+            "[INFO] DESENCRIPTANDO SISTEMA...", 
+            "[WAIT] ESPERE UN MOMENTO...",
+            "[SUCCESS] ACCESO AUTORIZADO.", 
+        ];
+
+        function verificarPassword() {
+            const val = document.getElementById('clave-cofre').value.trim();
+            if (btoa(val) === _k || (val.includes("22") && val.includes("noviembre")) || val === "221124") {
+                document.getElementById('card-password').style.display = 'none';
+                document.getElementById('pantalla-desencriptacion').style.display = 'block';
+                let k = 0;
+                function logLoop() {
+                    if(k < logs.length) {
+                        const d = document.createElement('div'); d.className='linea-hack'; d.innerText=logs[k++];
+                        document.getElementById('log-hack-container').appendChild(d);
+                        setTimeout(logLoop, 600);
+                    } else { setTimeout(startShow, 1000); }
+                } logLoop();
+            } else { 
+                const t = document.getElementById('card-password');
+                document.getElementById('error-cofre').style.display = 'block';
+                t.style.animation = 'none'; t.offsetHeight; t.style.animation = 'shake 0.5s';
+                setTimeout(() => t.style.animation = 'latido 2s infinite', 500);
+            }
+        }
+
+        function startShow() {
+            document.getElementById('bloqueo-inicial').style.opacity = '0';
+            setTimeout(() => { document.getElementById('bloqueo-inicial').style.display = 'none'; }, 1000);
+            setTimeout(() => { document.getElementById('telon-overlay').classList.add('abierto'); }, 200);
+            setTimeout(() => { document.querySelector('.carta').classList.add('foco-prendido'); escribiendo(); }, 2000);
+            reproducir();
+        }
+
+        function escribiendo() {
+            const sfx = document.getElementById("sfx-teclado"); 
+            if(i === 0 && j === 0) { sfx.play(); lluviaInt = setInterval(crearCorazon, 300); }
+            if (i < tituloTexto.length) { document.getElementById("titulo").innerHTML += tituloTexto.charAt(i++); setTimeout(escribiendo, 100); } 
+            else if (j < cuerpoTexto.length) {
+                if (cuerpoTexto.charAt(j) === '<') {
+                    let e = ""; while (j < cuerpoTexto.length && cuerpoTexto.charAt(j) !== '>') { e += cuerpoTexto.charAt(j++); }
+                    e += ">"; j++; document.getElementById("texto-carta").innerHTML += e;
+                    setTimeout(escribiendo, 0); 
+                } else { document.getElementById("texto-carta").innerHTML += cuerpoTexto.charAt(j++); setTimeout(escribiendo, 50); }
+            } else { sfx.pause(); clearInterval(lluviaInt); document.getElementById("seccion-final").style.display = "flex"; setTimeout(()=>document.getElementById("seccion-final").style.opacity=1, 100); }
+        }
+
+        function crearCorazon() {
+            const c = document.createElement('div'); c.innerHTML = emojiLluvia; c.className = 'corazon';
+            c.style.left = Math.random() * 100 + 'vw'; document.body.appendChild(c);
+            const d = Math.random() * 3 + 4; c.style.transition = `transform ${d}s linear, opacity ${d}s ease-out`;
+            requestAnimationFrame(() => { c.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`; c.style.opacity = '0'; });
+            setTimeout(() => c.remove(), d * 1000);
+        }
+
+        function toggleMenu() { document.getElementById("miMenu").classList.toggle("activo"); }
+        function reproducir() { let a = document.getElementById("miMusica"), b = document.getElementById("btnMusica"); if (a.paused) { a.play().catch(()=>{}); b.innerHTML = "⏸️ Pausar"; } else { a.pause(); b.innerHTML = "🎵 Música"; } }
+        function mostrarContador() { document.getElementById("modal-contador").style.display = "flex"; toggleMenu(); actualizarReloj(); }
+        function mostrarDeseos() { document.getElementById("modal-deseos").style.display = "flex"; toggleMenu(); }
+        function mostrarQuiz() { document.getElementById("modal-quiz").style.display = "flex"; toggleMenu(); }
+        function mostrarConfig() { document.getElementById("modal-config").style.display = "flex"; toggleMenu(); }
+        
+        function mostrarFechas() { 
+            document.getElementById("modal-fechas").style.display = "flex"; 
+            toggleMenu(); 
+        }
+        
+        function cerrarModal(id) { document.getElementById(id).style.display = "none"; }
+
+        function cambiarLluvia(nuevo) { emojiLluvia = nuevo; document.getElementById("config-status").style.display='block'; setTimeout(()=>document.getElementById("config-status").style.display='none', 2000); }
+
+        function actualizarReloj() {
+            if (document.getElementById("modal-contador").style.display !== "flex") return;
+            const inicio = new Date(2025, 1, 14);
+            const ahora = new Date();
+            let diff = ahora - inicio;
+            if (diff < 0) diff = 0;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            document.getElementById("reloj-digital").innerHTML = `<div style="font-size:3rem; color:#d4af37; font-weight:bold">${d} días</div><div style="font-size:1.2rem;">${h}h : ${m}m : ${s}s</div>`;
+            setTimeout(actualizarReloj, 1000);
+        }
+
+        function validarQuiz() {
+            let c = 0; if(document.getElementById("p1").value === "correcta") c++; if(document.getElementById("p2").value === "correcta") c++; if(document.getElementById("p3").value === "correcta") c++; if(document.getElementById("p4").value === "correcta") c++; if(document.getElementById("p5").value === "correcta") c++;
+            let r = document.getElementById("resultado-quiz"); if(c === 5) { r.innerHTML = "🏆 ¡100/100! Eres la mejor ❤️"; r.style.color = "#d4af37"; for(let k=0; k<20; k++) setTimeout(crearCorazon, k*100); } else { r.innerHTML = `❌ Tienes ${c}/5. ¡Intenta de nuevo!`; r.style.color = "#ff4d4d"; }
+        }
+
+        document.getElementById("form-deseos").onsubmit = async (e) => {
+            e.preventDefault(); const f = e.target, btn = f.querySelector('button'), t = btn.innerHTML; btn.innerHTML = "Enviando... 🚀"; btn.disabled = true;
+            try { const res = await fetch(f.action, { method: f.method, body: new FormData(f), headers: {'Accept': 'application/json'}});
+            if (res.ok) { alert("¡Enviado! ❤️"); cerrarModal('modal-deseos'); f.reset(); } else { alert("Error."); } } catch (err) { alert("Sin internet."); } finally { btn.innerHTML = t; btn.disabled = false; }
+        };
+
+        document.getElementById('clave-cofre').addEventListener('keypress', (e) => { if (e.key === 'Enter') verificarPassword(); });
+    </script>
+</body>
+</html>
